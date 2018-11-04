@@ -10,15 +10,13 @@ import jssc.SerialPortException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
-public class ViscaResponseReader {
+class ViscaResponseReader {
     private static final long TIMEOUT_MS = 5000L;
 
-    public ViscaResponseReader() {
-    }
-
-    public static byte[] readResponse(SerialPort serialPort) throws ViscaResponseReader.TimeoutException, SerialPortException {
-        ArrayList<Byte> data = new ArrayList();
+    static byte[] readResponse(SerialPort serialPort) throws ViscaResponseReader.TimeoutException, SerialPortException {
+        List<Byte> data = new ArrayList<>();
         long startTime = System.currentTimeMillis();
 
         long timeDiff;
@@ -42,13 +40,13 @@ public class ViscaResponseReader {
 
             long currentTime = System.currentTimeMillis();
             timeDiff = currentTime - startTime;
-        } while(timeDiff <= 5000L);
+        } while(timeDiff <= TIMEOUT_MS);
 
         throw new ViscaResponseReader.TimeoutException();
     }
 
     public static class TimeoutException extends Exception {
-        public TimeoutException() {
+        TimeoutException() {
         }
 
         public TimeoutException(String message, Throwable cause) {

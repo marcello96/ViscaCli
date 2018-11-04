@@ -7,15 +7,17 @@ package pl.edu.agh.kis.visca;
 
 import jssc.SerialPort;
 import jssc.SerialPortException;
-import pl.edu.agh.kis.visca.ViscaResponseReader.TimeoutException;
-import pl.edu.agh.kis.visca.cmd.*;
+import pl.edu.agh.kis.visca.cmd.AddressCmd;
+import pl.edu.agh.kis.visca.cmd.Cmd;
+import pl.edu.agh.kis.visca.cmd.PanTiltHomeCmd;
 import pl.edu.agh.kis.visca.model.CommandFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.List;
+
+import static pl.edu.agh.kis.visca.ViscaCommandHelper.sleep;
 
 public class Main {
     public Main() {
@@ -63,20 +65,14 @@ public class Main {
     }
 
     private static String[] parseInput(String userInput) {
-        if (userInput.startsWith("macro:")) {
-            String commands = userInput.substring(6);
+        final String MARCO_COMMAND_PREFIX = "macro:";
+        final String SEMICOLON_REGEX = "\\s*;\\s*";
 
-            return commands.split(";");
+        if (userInput.startsWith(MARCO_COMMAND_PREFIX)) {
+            String commands = userInput.substring(MARCO_COMMAND_PREFIX.length());
+
+            return commands.split(SEMICOLON_REGEX);
         }
         return new String[] {userInput};
-    }
-
-    private static void sleep(int timeSec) {
-        try {
-            Thread.sleep((long)(timeSec * 1000));
-        } catch (InterruptedException var2) {
-            var2.printStackTrace();
-        }
-
     }
 }
