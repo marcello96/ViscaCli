@@ -43,7 +43,10 @@ public class Main {
                 List<Cmd> commands = CommandFactory.createCommandList(parseInput(line));
                 for (Cmd command : commands) {
                     ViscaCommandHelper.sendCommand(serialPort, command);
-                    ViscaCommandHelper.readResponse(serialPort);
+                    if(command.isExecutable()) {
+                        ViscaCommandHelper.readResponse(serialPort);
+                        ViscaCommandHelper.readResponse(serialPort);
+                    }
                 }
                 System.out.print("Enter command:\n~");
             }
@@ -57,9 +60,11 @@ public class Main {
     private static void configDevice(SerialPort serialPort) {
         ViscaCommandHelper.sendCommand(serialPort, new AddressCmd());
         ViscaCommandHelper.readResponse(serialPort);
+
         sleep(2);
 
         ViscaCommandHelper.sendCommand(serialPort, new PanTiltHomeCmd());
+        ViscaCommandHelper.readResponse(serialPort);
         ViscaCommandHelper.readResponse(serialPort);
         sleep(2);
     }

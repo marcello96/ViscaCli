@@ -1,7 +1,5 @@
 package pl.edu.agh.kis.visca.cmd;
 
-import pl.edu.agh.kis.visca.model.Constants;
-
 import static pl.edu.agh.kis.visca.ViscaCommandHelper.sleep;
 
 public class WaitCmd extends Cmd {
@@ -9,12 +7,12 @@ public class WaitCmd extends Cmd {
     private int time;
 
     public WaitCmd() {
-        super(Constants.DESTINATION_ADDRESS);
+        super(false, false);
         this.time = DEFAULT_TIME_WAITING;
     }
 
     @Override
-    public byte[] createCommandData() {
+    public byte[] prepareContent() {
         sleep(time);
         return new byte[0];
     }
@@ -26,5 +24,4 @@ public class WaitCmd extends Cmd {
     public int getTime() {
         return time;
     }
-
 }

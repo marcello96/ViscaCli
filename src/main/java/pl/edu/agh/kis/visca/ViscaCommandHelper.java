@@ -4,22 +4,22 @@ import jssc.SerialPort;
 import jssc.SerialPortException;
 import pl.edu.agh.kis.visca.cmd.Cmd;
 import pl.edu.agh.kis.visca.cmd.ViscaCommand;
-import pl.edu.agh.kis.visca.cmd.WaitCmd;
+import pl.edu.agh.kis.visca.model.Constants;
 
 public class ViscaCommandHelper {
 
     static void sendCommand(SerialPort serialPort, Cmd command) {
-
-        if (command instanceof WaitCmd) {
-            sleep(((WaitCmd) command).getTime());
+        if (!command.isExecutable()) {
+            command.prepareContent();
             return;
         }
-        byte[] cmdData = command.createCommandData();
+
+        byte[] cmdData = command.prepareContent();
         try {
             ViscaCommand vCmd = new ViscaCommand();
             vCmd.commandData = cmdData;
             vCmd.sourceAdr = 0;
-            vCmd.destinationAdr = command.getDestination();
+            vCmd.destinationAdr = command.isBroadcast() ? Constants.BROADCAST_ADDRESS : Constants.DESTINATION_ADDRESS;
             cmdData = vCmd.getCommandData();
             System.out.println("@ " + byteArrayToString(cmdData));
 
@@ -33,7 +33,7 @@ public class ViscaCommandHelper {
         byte[] response;
         try {
             response = ViscaResponseReader.readResponse(serialPort);
-            System.out.println("> " + byteArrayToString(response));
+            System.out.println("> " + ViscaResponseTranslator.translateResponse(byteArrayToString(response)));
         } catch (ViscaResponseReader.TimeoutException var15) {
             System.out.println("! TIMEOUT exception");
         } catch (SerialPortException e) {

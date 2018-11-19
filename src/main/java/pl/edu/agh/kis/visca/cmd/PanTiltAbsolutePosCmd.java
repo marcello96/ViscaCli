@@ -5,17 +5,15 @@
 
 package pl.edu.agh.kis.visca.cmd;
 
-import pl.edu.agh.kis.visca.model.Constants;
-
 public final class PanTiltAbsolutePosCmd extends Cmd {
     private static final byte[] ptAbsolutPosCommandData = new byte[]{1, 6, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     public PanTiltAbsolutePosCmd() {
-        super(Constants.DESTINATION_ADDRESS);
+        super(false, true);
     }
 
     @Override
-    public byte[] createCommandData() {
+    public byte[] prepareContent() {
         byte[] cmdData = duplicateArray(ptAbsolutPosCommandData);
         cmdData[3] = 1;
         cmdData[5] = 0;

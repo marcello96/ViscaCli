@@ -19,6 +19,14 @@ public class CommandFactory {
             return getWaitCommand(inputCommand);
         }
 
+        if (inputCommand.startsWith(CommandName.CHANGE_ADDRESS.name())) {
+            return getChangeAddress(inputCommand);
+        }
+
+        if (inputCommand.startsWith(CommandName.SET_DEST.name())) {
+            return getSetDest(inputCommand);
+        }
+
         if (inputCommand.startsWith(CommandName.ZOOM_TELE.name())) {
             return getZoomTeleCommand(inputCommand);
         }
@@ -27,19 +35,19 @@ public class CommandFactory {
             return getZoomWideCommand(inputCommand);
         }
 
-        if (inputCommand.startsWith(CommandName.PAN_TILT_UP.name())) {
+        if (inputCommand.startsWith(CommandName.UP.name())) {
             return getPanTiltUpCommand(inputCommand);
         }
 
-        if (inputCommand.startsWith(CommandName.PAN_TILT_DOWN.name())) {
+        if (inputCommand.startsWith(CommandName.DOWN.name())) {
             return getPanTiltDownCommand(inputCommand);
         }
 
-        if (inputCommand.startsWith(CommandName.PAN_TILT_LEFT.name())) {
+        if (inputCommand.startsWith(CommandName.LEFT.name())) {
             return getPanTiltLeftCommand(inputCommand);
         }
 
-        if (inputCommand.startsWith(CommandName.PAN_TILT_RIGHT.name())) {
+        if (inputCommand.startsWith(CommandName.RIGHT.name())) {
             return getPanTiltRightCommand(inputCommand);
         }
 
@@ -53,6 +61,36 @@ public class CommandFactory {
 
         try {
             cmd.setTime(Integer.parseInt(time));
+        } catch (NumberFormatException e) {
+            System.out.println("Wrong format: should be an integer" + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return cmd;
+    }
+
+    private static Cmd getSetDest(String inputCommand) {
+        int pos = inputCommand.indexOf("_", inputCommand.indexOf("_") + 1);
+        String address = inputCommand.substring(pos + 1);
+        SetDestCmd cmd = (SetDestCmd) CommandName.SET_DEST.getCommand();
+
+        try {
+            cmd.setAddress(Byte.parseByte(address));
+        } catch (NumberFormatException e) {
+            System.out.println("Wrong format: should be an integer" + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return cmd;
+    }
+
+    private static Cmd getChangeAddress(String inputCommand) {
+        int pos = inputCommand.indexOf("_", inputCommand.indexOf("_") + 1);
+        String address = inputCommand.substring(pos + 1);
+        ChangeAddressCmd cmd = (ChangeAddressCmd) CommandName.CHANGE_ADDRESS.getCommand();
+
+        try {
+            cmd.setNewAddress(Byte.parseByte(address));
         } catch (NumberFormatException e) {
             System.out.println("Wrong format: should be an integer" + e.getMessage());
             e.printStackTrace();
@@ -103,25 +141,17 @@ public class CommandFactory {
     }
 
     private static Cmd getPanTiltUpCommand(String inputCommand) {
-        int pos = inputCommand.indexOf("_",
-                inputCommand.indexOf("_",
-                        inputCommand.indexOf("_") + 1) + 1);
+        int pos = inputCommand.indexOf("_");
 
-        int pos2 = inputCommand.indexOf("_",
-                inputCommand.indexOf("_",
-                        inputCommand.indexOf("_",
-                                inputCommand.indexOf("_") + 1) + 1) + 1);
-
-        PanTiltUpCmd cmd = (PanTiltUpCmd) CommandName.PAN_TILT_UP.getCommand();
-        if (pos == -1 || pos2 == -1) {
+        PanTiltUpCmd cmd = (PanTiltUpCmd) CommandName.UP.getCommand();
+        if (pos == -1) {
             return cmd;
         }
 
-        String panSpeed = inputCommand.substring(pos + 1, pos2);
-        String tiltSpeed = inputCommand.substring(pos2 + 1);
+        String tiltSpeed = inputCommand.substring(pos + 1);
 
         try {
-            cmd.setSpeed(ConstantPanSpeed.valueOf(panSpeed), ConstantTiltSpeed.valueOf(tiltSpeed));
+            cmd.setSpeed(ConstantTiltSpeed.valueOf(tiltSpeed));
         } catch (IllegalArgumentException e) {
             System.out.println("Wrong format should be a constant in ConstantPanSpeed and in ConstantTiltSpeed" + e.getMessage());
             e.printStackTrace();
@@ -131,26 +161,18 @@ public class CommandFactory {
     }
 
     private static Cmd getPanTiltDownCommand(String inputCommand) {
-        int pos = inputCommand.indexOf("_",
-                inputCommand.indexOf("_",
-                        inputCommand.indexOf("_") + 1) + 1);
+        int pos = inputCommand.indexOf("_");
 
-        int pos2 = inputCommand.indexOf("_",
-                inputCommand.indexOf("_",
-                        inputCommand.indexOf("_",
-                                inputCommand.indexOf("_") + 1) + 1) + 1);
+        PanTiltDownCmd cmd = (PanTiltDownCmd) CommandName.DOWN.getCommand();
 
-        PanTiltDownCmd cmd = (PanTiltDownCmd) CommandName.PAN_TILT_DOWN.getCommand();
-
-        if (pos == -1 || pos2 == -1) {
+        if (pos == -1) {
             return cmd;
         }
 
-        String panSpeed = inputCommand.substring(pos + 1, pos2);
-        String tiltSpeed = inputCommand.substring(pos2 + 1);
+        String tiltSpeed = inputCommand.substring(pos + 1);
 
         try {
-            cmd.setSpeed(ConstantPanSpeed.valueOf(panSpeed), ConstantTiltSpeed.valueOf(tiltSpeed));
+            cmd.setSpeed(ConstantTiltSpeed.valueOf(tiltSpeed));
         } catch (IllegalArgumentException e) {
             System.out.println("Wrong format should be a constant in ConstantPanSpeed and in ConstantTiltSpeed" + e.getMessage());
             e.printStackTrace();
@@ -160,26 +182,18 @@ public class CommandFactory {
     }
 
     private static Cmd getPanTiltLeftCommand(String inputCommand) {
-        int pos = inputCommand.indexOf("_",
-                inputCommand.indexOf("_",
-                        inputCommand.indexOf("_") + 1) + 1);
+        int pos = inputCommand.indexOf("_");
 
-        int pos2 = inputCommand.indexOf("_",
-                inputCommand.indexOf("_",
-                        inputCommand.indexOf("_",
-                                inputCommand.indexOf("_") + 1) + 1) + 1);
+        PanTiltLeftCmd cmd = (PanTiltLeftCmd) CommandName.LEFT.getCommand();
 
-        PanTiltLeftCmd cmd = (PanTiltLeftCmd) CommandName.PAN_TILT_LEFT.getCommand();
-
-        if (pos == -1 || pos2 == -1) {
+        if (pos == -1) {
             return cmd;
         }
 
-        String panSpeed = inputCommand.substring(pos + 1, pos2);
-        String tiltSpeed = inputCommand.substring(pos2 + 1);
+        String panSpeed = inputCommand.substring(pos + 1);
 
         try {
-            cmd.setSpeed(ConstantPanSpeed.valueOf(panSpeed), ConstantTiltSpeed.valueOf(tiltSpeed));
+            cmd.setSpeed(ConstantPanSpeed.valueOf(panSpeed));
         } catch (IllegalArgumentException e) {
             System.out.println("Wrong format should be a constant in ConstantPanSpeed and in ConstantTiltSpeed" + e.getMessage());
             e.printStackTrace();
@@ -189,26 +203,19 @@ public class CommandFactory {
     }
 
     private static Cmd getPanTiltRightCommand(String inputCommand) {
-        int pos = inputCommand.indexOf("_",
-                inputCommand.indexOf("_",
-                        inputCommand.indexOf("_") + 1) + 1);
+        int pos = inputCommand.indexOf("_");
 
-        int pos2 = inputCommand.indexOf("_",
-                inputCommand.indexOf("_",
-                        inputCommand.indexOf("_",
-                                inputCommand.indexOf("_") + 1) + 1) + 1);
 
-        PanTiltRightCmd cmd = (PanTiltRightCmd) CommandName.PAN_TILT_RIGHT.getCommand();
+        PanTiltRightCmd cmd = (PanTiltRightCmd) CommandName.RIGHT.getCommand();
 
-        if (pos == -1 || pos2 == -1) {
+        if (pos == -1) {
             return cmd;
         }
 
-        String panSpeed = inputCommand.substring(pos + 1, pos2);
-        String tiltSpeed = inputCommand.substring(pos2 + 1);
+        String panSpeed = inputCommand.substring(pos + 1);
 
         try {
-            cmd.setSpeed(ConstantPanSpeed.valueOf(panSpeed), ConstantTiltSpeed.valueOf(tiltSpeed));
+            cmd.setSpeed(ConstantPanSpeed.valueOf(panSpeed));
         } catch (IllegalArgumentException e) {
             System.out.println("Wrong format should be a constant in ConstantPanSpeed and in ConstantTiltSpeed" + e.getMessage());
             e.printStackTrace();

@@ -6,17 +6,20 @@
 package pl.edu.agh.kis.visca.cmd;
 
 public abstract class Cmd {
-    public Cmd(byte destination) {
-        this.destination = destination;
+    public Cmd(boolean isBroadcast, boolean isExecutable) {
+        this.isBroadcast = isBroadcast;
+        this.isExecutable = isExecutable;
     }
 
-    private byte destination;
+    private boolean isBroadcast;
+    private boolean isExecutable;
 
-    public abstract byte[] createCommandData();
+    public abstract byte[] prepareContent();
 
-    public byte getDestination() {
-        return destination;
+    public boolean isBroadcast() {
+        return isBroadcast;
     }
+    public boolean isExecutable() { return isExecutable; }
 
     protected static byte[] duplicateArray(byte[] src) {
         byte[] dest = new byte[src.length];
