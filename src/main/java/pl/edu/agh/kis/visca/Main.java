@@ -30,6 +30,8 @@ public class Main {
         String commName = args[0];
         SerialPort serialPort = new SerialPort(commName);
 
+        MacroService macroService = MacroService.getInstance();
+
         try {
             serialPort.openPort();
             serialPort.setParams(9600, 8, 1, 0);
@@ -40,7 +42,12 @@ public class Main {
             BufferedReader br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null && !line.equals("exit") ) {
-                List<Cmd> commands = CommandFactory.createCommandList(parseInput(line));
+                if (macroService.checkIfMacroDefinition(line)) {
+                    macroService.parseMacro(line);
+                    System.out.println("Macro defined!\n~");
+                    continue;
+                }
+                List<Cmd> commands = CommandFactory.createCommandList(new String[] {line});
                 for (Cmd command : commands) {
                     ViscaCommandHelper.sendCommand(serialPort, command);
                     if(command.isExecutable()) {
@@ -52,6 +59,7 @@ public class Main {
             }
 
             isr.close();
+            serialPort.closePort();
         } catch (IOException | SerialPortException ioe) {
             ioe.printStackTrace();
         }
@@ -67,17 +75,5 @@ public class Main {
         ViscaCommandHelper.readResponse(serialPort);
         ViscaCommandHelper.readResponse(serialPort);
         sleep(2);
-    }
-
-    private static String[] parseInput(String userInput) {
-        final String MARCO_COMMAND_PREFIX = "macro:";
-        final String SEMICOLON_REGEX = "\\s*;\\s*";
-
-        if (userInput.startsWith(MARCO_COMMAND_PREFIX)) {
-            String commands = userInput.substring(MARCO_COMMAND_PREFIX.length());
-
-            return commands.split(SEMICOLON_REGEX);
-        }
-        return new String[] {userInput};
     }
 }

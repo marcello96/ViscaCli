@@ -19,6 +19,7 @@ jar {
 
 dependencies {
     compile name: 'jssc'
+    compile group: 'com.google.guava', name: 'guava', version: '27.0-jre'
 }
 
 task fatJar(type: Jar) {

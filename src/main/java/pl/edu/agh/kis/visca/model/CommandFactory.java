@@ -1,57 +1,66 @@
 package pl.edu.agh.kis.visca.model;
 
+import pl.edu.agh.kis.visca.MacroService;
 import pl.edu.agh.kis.visca.cmd.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CommandFactory {
+    private static MacroService macroService = MacroService.getInstance();
 
     public static List<Cmd> createCommandList(String[] inputCommands) {
         return Stream.of(inputCommands)
                 .map(CommandFactory::createCommand)
+                .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
-    private static Cmd createCommand(String inputCommand) {
+    private static Collection<Cmd> createCommand(String inputCommand) {
+        if (macroService.isMacroDefined(inputCommand)) {
+            return macroService.getCommands(inputCommand);
+        }
+
         if (inputCommand.startsWith(CommandName.WAIT.name())) {
-            return getWaitCommand(inputCommand);
+            return Collections.singletonList(getWaitCommand(inputCommand));
         }
 
         if (inputCommand.startsWith(CommandName.CHANGE_ADDRESS.name())) {
-            return getChangeAddress(inputCommand);
+            return Collections.singletonList(getChangeAddress(inputCommand));
         }
 
         if (inputCommand.startsWith(CommandName.SET_DEST.name())) {
-            return getSetDest(inputCommand);
+            return Collections.singletonList(getSetDest(inputCommand));
         }
 
         if (inputCommand.startsWith(CommandName.ZOOM_TELE.name())) {
-            return getZoomTeleCommand(inputCommand);
+            return Collections.singletonList(getZoomTeleCommand(inputCommand));
         }
 
         if (inputCommand.startsWith(CommandName.ZOOM_WIDE.name())) {
-            return getZoomWideCommand(inputCommand);
+            return Collections.singletonList(getZoomWideCommand(inputCommand));
         }
 
         if (inputCommand.startsWith(CommandName.UP.name())) {
-            return getPanTiltUpCommand(inputCommand);
+            return Collections.singletonList(getPanTiltUpCommand(inputCommand));
         }
 
         if (inputCommand.startsWith(CommandName.DOWN.name())) {
-            return getPanTiltDownCommand(inputCommand);
+            return Collections.singletonList(getPanTiltDownCommand(inputCommand));
         }
 
         if (inputCommand.startsWith(CommandName.LEFT.name())) {
-            return getPanTiltLeftCommand(inputCommand);
+            return Collections.singletonList(getPanTiltLeftCommand(inputCommand));
         }
 
         if (inputCommand.startsWith(CommandName.RIGHT.name())) {
-            return getPanTiltRightCommand(inputCommand);
+            return Collections.singletonList(getPanTiltRightCommand(inputCommand));
         }
 
-        return CommandName.valueOf(inputCommand).getCommand();
+        return Collections.singletonList(CommandName.valueOf(inputCommand).getCommand());
     }
 
     private static Cmd getWaitCommand(String inputCommand) {
