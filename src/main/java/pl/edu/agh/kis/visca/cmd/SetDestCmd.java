@@ -22,4 +22,9 @@ public class SetDestCmd extends Cmd {
     public byte getAddress() {
         return address;
     }
+
+    @Override
+    public String toString() {
+        return "SET_DEST_" + address;
+    }
 }

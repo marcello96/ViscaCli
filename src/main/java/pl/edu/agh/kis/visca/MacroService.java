@@ -1,12 +1,11 @@
 package pl.edu.agh.kis.visca;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import pl.edu.agh.kis.visca.cmd.Cmd;
 import pl.edu.agh.kis.visca.model.CommandFactory;
 
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MacroService {
     private static final String MARCO_COMMAND_PREFIX = "macro:";
@@ -14,7 +13,7 @@ public class MacroService {
     private static final String COLON_REGEX = "\\s*:\\s*";
 
     private static MacroService instance;
-    private Multimap<String, Cmd> macrosMap = ArrayListMultimap.create();
+    private Map<String, List<Cmd>> macrosMap = new HashMap<>();
 
     private MacroService() {}
 
@@ -29,7 +28,7 @@ public class MacroService {
         return macrosMap.containsKey(macro);
     }
 
-    public Collection<Cmd> getCommands(String macro) {
+    public List<Cmd> getCommands(String macro) {
         return macrosMap.get(macro);
     }
 
@@ -41,7 +40,7 @@ public class MacroService {
         String[] commandNames =  commands.split(SEMICOLON_REGEX);
 
         List<Cmd> commandList = CommandFactory.createCommandList(commandNames);
-        macrosMap.putAll(name, commandList);
+        macrosMap.put(name, commandList);
     }
 
     public boolean checkIfMacroDefinition(String input) {

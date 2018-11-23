@@ -8,6 +8,7 @@ package pl.edu.agh.kis.visca;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 import pl.edu.agh.kis.visca.cmd.AddressCmd;
+import pl.edu.agh.kis.visca.cmd.ChangeAddressCmd;
 import pl.edu.agh.kis.visca.cmd.Cmd;
 import pl.edu.agh.kis.visca.cmd.PanTiltHomeCmd;
 import pl.edu.agh.kis.visca.model.CommandFactory;
@@ -42,19 +43,24 @@ public class Main {
             BufferedReader br = new BufferedReader(isr);
             String line;
             while ((line = br.readLine()) != null && !line.equals("exit") ) {
-                if (macroService.checkIfMacroDefinition(line)) {
-                    macroService.parseMacro(line);
-                    System.out.println("Macro defined!\n~");
-                    continue;
-                }
-                List<Cmd> commands = CommandFactory.createCommandList(new String[] {line});
-                for (Cmd command : commands) {
-                    ViscaCommandHelper.sendCommand(serialPort, command);
-                    if(command.isExecutable()) {
-                        ViscaCommandHelper.readResponse(serialPort);
-                        ViscaCommandHelper.readResponse(serialPort);
+                try {
+                    if (macroService.checkIfMacroDefinition(line)) {
+                        macroService.parseMacro(line);
+                        System.out.println("Macro defined!\n~");
+                        continue;
                     }
+                    List<Cmd> commands = CommandFactory.createCommandList(new String[] {line});
+
+                    for (Cmd command : commands) {
+                        ViscaCommandHelper.sendCommand(serialPort, command);
+                        if(command.isExecutable() && ViscaCommandHelper.readResponse(serialPort)) {
+                            ViscaCommandHelper.readResponse(serialPort);
+                        }
+                    }
+                } catch (Exception ex) {
+                    System.out.println("Error!!!\n");
                 }
+
                 System.out.print("Enter command:\n~");
             }
 

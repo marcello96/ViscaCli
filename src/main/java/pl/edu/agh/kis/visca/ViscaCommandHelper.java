@@ -21,7 +21,6 @@ public class ViscaCommandHelper {
             vCmd.sourceAdr = 0;
             vCmd.destinationAdr = command.isBroadcast() ? Constants.BROADCAST_ADDRESS : Constants.DESTINATION_ADDRESS;
             cmdData = vCmd.getCommandData();
-            System.out.println("@ " + byteArrayToString(cmdData));
 
             serialPort.writeBytes(cmdData);
         } catch (SerialPortException | RuntimeException e) {
@@ -29,16 +28,23 @@ public class ViscaCommandHelper {
         }
     }
 
-    static void readResponse(SerialPort serialPort){
+    static boolean readResponse(SerialPort serialPort){
         byte[] response;
         try {
             response = ViscaResponseReader.readResponse(serialPort);
-            System.out.println("> " + ViscaResponseTranslator.translateResponse(byteArrayToString(response)));
+            String translatorResponse = ViscaResponseTranslator.translateResponse(byteArrayToString(response));
+            if (!translatorResponse.equals("")) {
+                System.out.println("> " + translatorResponse);
+            }
+            if(translatorResponse.equals("ACK")){
+                return true;
+            }
         } catch (ViscaResponseReader.TimeoutException var15) {
             System.out.println("! TIMEOUT exception");
         } catch (SerialPortException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     private static String byteArrayToString(byte[] bytes) {

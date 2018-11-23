@@ -24,4 +24,9 @@ public class WaitCmd extends Cmd {
     public int getTime() {
         return time;
     }
+
+    @Override
+    public String toString() {
+        return "WAIT_" + time;
+    }
 }

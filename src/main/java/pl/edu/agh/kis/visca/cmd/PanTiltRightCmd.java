@@ -7,6 +7,7 @@ package pl.edu.agh.kis.visca.cmd;
 
 public final class PanTiltRightCmd extends Cmd {
     private static final byte[] ptRightCommandData = new byte[]{1, 6, 1, 0x00, 0x00, 2, 3};
+    private ConstantPanSpeed panSpeed;
 
     public PanTiltRightCmd() {
         super(false, true);
@@ -15,12 +16,16 @@ public final class PanTiltRightCmd extends Cmd {
 
     @Override
     public byte[] prepareContent() {
-        /*cmdData[3] = 4;
-        cmdData[4] = 1;*/
         return duplicateArray(ptRightCommandData);
     }
 
     public void setSpeed(ConstantPanSpeed panSpeed) {
+        this.panSpeed = panSpeed;
         ptRightCommandData[3] = panSpeed.getByteValue();
+    }
+
+    @Override
+    public String toString() {
+        return panSpeed != null ? "RIGHT_" + panSpeed.name() : "RIGHT";
     }
 }

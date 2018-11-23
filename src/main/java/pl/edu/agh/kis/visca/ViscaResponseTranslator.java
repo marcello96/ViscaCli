@@ -10,6 +10,9 @@ public class ViscaResponseTranslator {
         MAP.put("41 FF", "ACK");
         MAP.put("51 FF", "OK");
 
+        MAP.put("42 FF", "ACK");
+        MAP.put("52 FF", "OK");
+
         MAP.put("60 01 FF", "Message length error (>14 bytes)");
         MAP.put("60 02 FF", "Syntax error");
         MAP.put("60 03 FF", "Command buffer full");
@@ -21,6 +24,6 @@ public class ViscaResponseTranslator {
 
     public static String translateResponse(String response) {
         String responseBody = response.substring(response.indexOf(" ")+1).trim();
-        return MAP.getOrDefault(responseBody, response);
+        return MAP.getOrDefault(responseBody, "");
     }
 }

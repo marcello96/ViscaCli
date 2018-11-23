@@ -7,6 +7,7 @@ package pl.edu.agh.kis.visca.cmd;
 
 public final class ZoomWideStdCmd extends Cmd {
     private static final byte[] ptWideStdCommandData = new byte[]{1, 4, 7, 0x00};
+    private CONSTANT_SPEED speed;
 
     public ZoomWideStdCmd() {
         super(false, true);
@@ -38,5 +39,10 @@ public final class ZoomWideStdCmd extends Cmd {
         CONSTANT_SPEED(byte value) {
             this.value = value;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ZOOM_WIDE" + speed.name();
     }
 }

@@ -19,11 +19,11 @@ public class CommandFactory {
                 .collect(Collectors.toList());
     }
 
-    private static Collection<Cmd> createCommand(String inputCommand) {
+    private static List<Cmd> createCommand(String inputCommand) {
         if (macroService.isMacroDefined(inputCommand)) {
             return macroService.getCommands(inputCommand);
         }
-
+        inputCommand = inputCommand.toUpperCase();
         if (inputCommand.startsWith(CommandName.WAIT.name())) {
             return Collections.singletonList(getWaitCommand(inputCommand));
         }
